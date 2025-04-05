@@ -16,9 +16,15 @@ export default function HomeScreen() {
       >
         <Text style={styles.text}>Home</Text>
 
+        <Link href={"/songs"} style={{ marginHorizontal: "auto" }} asChild>
+          <Pressable style={styles.button}>
+            <Text style={styles.buttonText}>Songs</Text>
+          </Pressable>
+        </Link>
+
         <Link href={"/contact"} style={{ marginHorizontal: "auto" }} asChild>
           <Pressable style={styles.button}>
-            <Text style={styles.buttonText}>Contact</Text>
+            <Text style={styles.buttonText}>Contact Us</Text>
           </Pressable>
         </Link>
       </ImageBackground>
