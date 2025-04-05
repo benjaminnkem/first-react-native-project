@@ -2,6 +2,7 @@ import { ThemedText } from "@/components/ThemedText";
 import { IconSymbol } from "@/components/ui/IconSymbol";
 import { useEffect, useState } from "react";
 import {
+  Button,
   Image,
   Platform,
   Pressable,
@@ -12,8 +13,13 @@ import {
 } from "react-native";
 import { TextInput } from "react-native";
 import Fontisto from "@expo/vector-icons/Fontisto";
-import Animated, { LinearTransition } from "react-native-reanimated";
+import Animated, {
+  LinearTransition,
+  useSharedValue,
+  withSpring,
+} from "react-native-reanimated";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useRouter } from "expo-router";
 
 type Song = {
   id: string;
@@ -27,6 +33,12 @@ export default function Songs() {
   const [songTitle, setSongTitle] = useState("");
   const [songList, setSongList] = useState<Song[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const width = useSharedValue(20);
+
+  const handleIncreaseWidth = () => {
+    width.value = withSpring(width.value + 20);
+  };
 
   const addSong = (song: Song) => {
     const exists = songList.find((s) => s.title.trim() === song.id.trim());
@@ -65,7 +77,6 @@ export default function Songs() {
   };
 
   const storeData = async () => {
-    console.log("Storing data to storage", songList);
     try {
       const jsonValue = JSON.stringify(songList);
       await AsyncStorage.setItem("songs", jsonValue);
@@ -75,7 +86,6 @@ export default function Songs() {
   };
 
   const getData = async () => {
-    console.log("Getting data from storage");
     setLoading(true);
 
     try {
@@ -170,6 +180,15 @@ export default function Songs() {
             )}
           </View>
         </View>
+
+        <View className="mt-8 flex items-center justify-center">
+          <Animated.View
+            style={{ width }}
+            className="bg-red-500 h-10 rounded-md"
+          />
+
+          <Button onPress={handleIncreaseWidth} title="Click me" />
+        </View>
       </View>
     </Container>
   );
@@ -186,6 +205,8 @@ const Todo = ({ todo, onRemove, onEdit, onCompleteToggle }: TodoProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(todo.title);
 
+  const router = useRouter();
+
   const handleEdit = () => {
     if (editedTitle.trim() === "") {
       console.log("Empty song title");
@@ -197,7 +218,7 @@ const Todo = ({ todo, onRemove, onEdit, onCompleteToggle }: TodoProps) => {
   };
 
   return (
-    <View className="flex flex-row items-center justify-between mt-4 bg-gray-200 dark:bg-gray-700 flex-wrap dark:text-gray-300 text-gray-900 rounded-md p-4">
+    <Animated.View className="flex flex-row items-center justify-between mt-4 bg-gray-200 dark:bg-gray-700 flex-wrap dark:text-gray-300 text-gray-900 rounded-md p-4">
       {!isEditing ? (
         <>
           <View className="flex flex-row items-center gap-2">
@@ -215,7 +236,7 @@ const Todo = ({ todo, onRemove, onEdit, onCompleteToggle }: TodoProps) => {
             </ThemedText>
           </View>
           <View className="flex flex-row gap-2">
-            <Pressable onPress={() => setIsEditing(true)}>
+            <Pressable onPress={() => router.navigate(`/songs/${todo.id}`)}>
               <IconSymbol size={20} name="pencil" color={"#fff"} />
             </Pressable>
 
@@ -243,6 +264,6 @@ const Todo = ({ todo, onRemove, onEdit, onCompleteToggle }: TodoProps) => {
           </Pressable>
         </View>
       )}
-    </View>
+    </Animated.View>
   );
 };
