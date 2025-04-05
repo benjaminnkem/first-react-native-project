@@ -236,7 +236,14 @@ const Todo = ({ todo, onRemove, onEdit, onCompleteToggle }: TodoProps) => {
             </ThemedText>
           </View>
           <View className="flex flex-row gap-2">
-            <Pressable onPress={() => router.navigate(`/songs/${todo.id}`)}>
+            <Pressable
+              onPress={() =>
+                router.navigate({
+                  pathname: "/songs/[id]",
+                  params: { id: todo.id },
+                })
+              }
+            >
               <IconSymbol size={20} name="pencil" color={"#fff"} />
             </Pressable>
 
